@@ -1,0 +1,28 @@
+{
+  "name": "zwift-workout-sneaker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "lint": "eslint . --ext .ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarkusHeine/zwift-workout-sneaker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MarkusHeine/zwift-workout-sneaker/issues"
+  },
+  "homepage": "https://github.com/MarkusHeine/zwift-workout-sneaker#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint": "^8.36.0",
+    "eslint-config-xo": "^0.43.1",
+    "eslint-config-xo-typescript": "^0.56.0",
+    "typescript": "^4.9.5"
+  }
+}

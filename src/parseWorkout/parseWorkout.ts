@@ -11,10 +11,13 @@ export const parseRawBlock = (rawBlock: string): Block => {
 		type: undefined,
 	};
 
-	if (rawBlock.includes('free ride')) { 
+	if (rawBlock.includes('free ride')) {
 		parsedBlock.type = BlockType.FREE_RIDE;
-	} else if (/^\d+min @ \d+rpm, from \d+ to \d+% FTP$/i.exec(rawBlock)) { 
-		const [,, rpm, , firstPercentage, , secondPercentage] = rawBlock.split(' ')
+		return parsedBlock;
+	}
+
+	if (/^\d+min @ \d+rpm, from \d+ to \d+% FTP$/i.exec(rawBlock)) {
+		const [,, rpm, , firstPercentage, , secondPercentage] = rawBlock.split(' ');
 
 		const parsedRpm = parseFloat(rpm);
 		const parsedFirstPercentage = parseFloat(firstPercentage);
@@ -27,13 +30,19 @@ export const parseRawBlock = (rawBlock: string): Block => {
 		if (parsedFirstPercentage > parsedSecondPercentage) {
 			parsedBlock.type = BlockType.RAMP_DOWN;
 		}
-	} else if (/^\d+min @ \d+rpm, \d+% FTP$/.exec(rawBlock)) { 
-		parsedBlock.type = BlockType.TARGET;
-	} else if (/^\d+x \d+min \d+sec @ \d+rpm, \d+% FTP,\d+min \d+sec @ \d+rpm, \d+% FTP$/i.exec(rawBlock)) {
-		parsedBlock.type = BlockType.INTERVAL;
-	} else {
-		throw new Error(`rawBlock with string "${rawBlock}" cannot be parsed`);
+
+		return parsedBlock;
 	}
 
-	return parsedBlock;
+	if (/^\d+min @ \d+rpm, \d+% FTP$/.exec(rawBlock)) {
+		parsedBlock.type = BlockType.TARGET;
+		return parsedBlock;
+	}
+
+	if (/^\d+x \d+min \d+sec @ \d+rpm, \d+% FTP,\d+min \d+sec @ \d+rpm, \d+% FTP$/i.exec(rawBlock)) {
+		parsedBlock.type = BlockType.INTERVAL;
+		return parsedBlock;
+	}
+
+	throw new Error(`rawBlock with string "${rawBlock}" cannot be parsed`);
 };

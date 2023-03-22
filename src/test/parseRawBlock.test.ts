@@ -7,6 +7,7 @@ const rampUpString = '5min @ 85rpm, from 30 to 50% FTP';
 const rampDownString = '234min @ 85rpm, from 50 to 30% FTP';
 const targetString = '10min @ 90rpm, 65% FTP';
 const interValString = '9x 3min 30sec @ 90rpm, 70% FTP,1min 30sec @ 65rpm, 120% FTP';
+const failingBlock = 'this should fail'
 
 describe('ParseRawBlock', () => {
 	it('function should exist', () => {
@@ -69,5 +70,9 @@ describe('ParseRawBlock', () => {
 	it(`should have the type ${BlockType.INTERVAL} for the string ${interValString}`, () => {
 		const response = parseRawBlock(interValString);
 		expect(response.type).to.equal(BlockType.INTERVAL);
+	});
+
+	it('should throw an error if the string is not a valid block', () => {
+		expect(() => parseRawBlock(failingBlock)).to.throw(`rawBlock with string "${failingBlock}" cannot be parsed`);
 	});
 });

@@ -8,6 +8,7 @@ export enum BlockType {
 
 export type Block = {
 	type: BlockType | undefined;
+	repeat: number;
 };
 
 type Duration = {

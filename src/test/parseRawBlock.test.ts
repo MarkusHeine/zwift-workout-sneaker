@@ -1,13 +1,36 @@
 import {expect} from 'chai';
-import { BlockType } from '../models/block.model';
-import { parseRawBlock } from '../parseWorkout/parseWorkout';
+import {BlockType} from '../models/block.model';
+import {parseRawBlock} from '../parseWorkout/parseWorkout';
 
-const freeRideString = '1hr 30min free ride';
-const rampUpString = '5min @ 85rpm, from 30 to 50% FTP';
-const rampDownString = '234min @ 85rpm, from 50 to 30% FTP';
-const targetString = '10min @ 90rpm, 65% FTP';
-const interValString = '9x 3min 30sec @ 90rpm, 70% FTP,1min 30sec @ 65rpm, 120% FTP';
 const failingBlock = 'this should fail'
+
+const testBlocks = [
+	{
+		rawBlock: '1hr 30min free ride',
+		type: BlockType.FREE_RIDE,
+		repeat: 1,
+	},
+	{
+		rawBlock: '5min @ 85rpm, from 30 to 50% FTP',
+		type: BlockType.RAMP_UP,
+		repeat: 1,
+	},
+	{
+		rawBlock: '234min @ 85rpm, from 50 to 30% FTP',
+		type: BlockType.RAMP_DOWN,
+		repeat: 1,
+	},
+	{
+		rawBlock: '10min @ 90rpm, 65% FTP',
+		type: BlockType.TARGET,
+		repeat: 1,
+	},
+	{
+		rawBlock: '9x 3min 30sec @ 90rpm, 70% FTP,1min 30sec @ 65rpm, 120% FTP',
+		type: BlockType.INTERVAL,
+		repeat: 9,
+	},
+];
 
 describe('ParseRawBlock', () => {
 	it('function should exist', () => {
@@ -30,49 +53,22 @@ describe('ParseRawBlock', () => {
 		expect(() => parseRawBlock(true)).to.throw('rawBlock must be a string');
 	});
 
-	it('should return an object', () => {
-		const rampUpReturn = parseRawBlock(rampUpString);
-		expect(rampUpReturn).to.be.an('object');
-
-		const rampDownReturn = parseRawBlock(rampDownString);
-		expect(rampDownReturn).to.be.an('object');
-
-		const targetReturn = parseRawBlock(targetString);
-		expect(targetReturn).to.be.an('object');
-
-		const freeRideReturn = parseRawBlock(freeRideString);
-		expect(freeRideReturn).to.be.an('object');
-
-		const interValReturn = parseRawBlock(interValString);
-		expect(interValReturn).to.be.an('object');
-	});
-
-	it(`should have the type ${BlockType.FREE_RIDE} for the string ${freeRideString}`, () => {
-		const response = parseRawBlock(freeRideString);
-		expect(response.type).to.equal(BlockType.FREE_RIDE);
-	});
-
-	it(`should have the type ${BlockType.RAMP_UP} for the string ${rampUpString}`, () => {
-		const response = parseRawBlock(rampUpString);
-		expect(response.type).to.equal(BlockType.RAMP_UP);
-	});
-
-	it(`should have the type ${BlockType.RAMP_DOWN} for the string ${rampDownString}`, () => {
-		const response = parseRawBlock(rampDownString);
-		expect(response.type).to.equal(BlockType.RAMP_DOWN);
-	});
-
-	it(`should have the type ${BlockType.TARGET} for the string ${targetString}`, () => {
-		const response = parseRawBlock(targetString);
-		expect(response.type).to.equal(BlockType.TARGET);
-	});
-
-	it(`should have the type ${BlockType.INTERVAL} for the string ${interValString}`, () => {
-		const response = parseRawBlock(interValString);
-		expect(response.type).to.equal(BlockType.INTERVAL);
-	});
-
-	it('should throw an error if the string is not a valid block', () => {
+	it('should throw an error if rawBlock cannot be parsed', () => {
 		expect(() => parseRawBlock(failingBlock)).to.throw(`rawBlock with string "${failingBlock}" cannot be parsed`);
+	});
+
+	it('should return an object', () => {
+		testBlocks.forEach(block => {
+			const response = parseRawBlock(block.rawBlock);
+			expect(response).to.be.an('object');
+		});
+	});
+
+	testBlocks.forEach(block => {
+		it(`should have the type ${block.type} for the string ${block.rawBlock}`, () => {
+			const response = parseRawBlock(block.rawBlock);
+			expect(response.type).to.equal(block.type);
+			expect(response.repeat).to.be.equal(block.repeat);
+		});
 	});
 });

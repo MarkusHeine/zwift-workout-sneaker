@@ -9,13 +9,16 @@ export const parseRawBlock = (rawBlock: string): Block => {
 
 	const parsedBlock: Block = {
 		type: undefined,
+		repeat: 1,
 	};
 
+	// Free Ride
 	if (rawBlock.includes('free ride')) {
 		parsedBlock.type = BlockType.FREE_RIDE;
 		return parsedBlock;
 	}
 
+	// Ramp
 	if (/^\d+min @ \d+rpm, from \d+ to \d+% FTP$/i.exec(rawBlock)) {
 		const [,, rpm, , firstPercentage, , secondPercentage] = rawBlock.split(' ');
 
@@ -34,13 +37,25 @@ export const parseRawBlock = (rawBlock: string): Block => {
 		return parsedBlock;
 	}
 
+	// Target
 	if (/^\d+min @ \d+rpm, \d+% FTP$/.exec(rawBlock)) {
 		parsedBlock.type = BlockType.TARGET;
 		return parsedBlock;
 	}
 
+	// Interval
 	if (/^\d+x \d+min \d+sec @ \d+rpm, \d+% FTP,\d+min \d+sec @ \d+rpm, \d+% FTP$/i.exec(rawBlock)) {
 		parsedBlock.type = BlockType.INTERVAL;
+
+		const repeats = rawBlock.split('x')[0];
+
+		if (!repeats) {
+			throw new Error(`rawBlock with string "${rawBlock}" cannot be parsed`);
+		}
+
+		parsedBlock.repeat = parseInt(repeats, 10);
+
+
 		return parsedBlock;
 	}
 
